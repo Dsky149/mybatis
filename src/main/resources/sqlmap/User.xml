@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace 命名空间，作用是对SQL进行分类话管理，理解SQL隔离
+注意：使用mapper 代理开发，namespace 有特殊作用-->
+<mapper namespace="test">
+    <!--
+    通过ID查询用户表的ID
+    statement ID 将SQL封装到mappeedStatement 对象中
+    #{}表示一个占位符
+    parameterType:输入参数的类型
+    Id：接收输入参数的类型，如果是简单类型，可以是value或者其他类型
+    resultType:输出结果所映射成的java对象。
+    -->
+    <select id="findUserById" parameterType="int" resultType="mybatis.po.User">
+        select * from users t where t.id = #{id}
+    </select>
+
+    <!--根据用户名称模糊查询
+    #{}:占位符
+    ${}:不加任何修饰的拼接字符串，如果是简单类型只能输入value;
+    有SLQ注入的风险
+    -->
+    <select id="findUserByName" parameterType="String" resultType="mybatis.po.User">
+        select * from users t where t.name like '%${value}%'
+    </select>
+
+    <!--添加用户-->
+    <insert id="insertUser" parameterType="mybatis.po.User">
+        <!--丛数据库里取出数值放到一个地方-->
+        <selectKey keyProperty="id"  resultType="java.lang.String" order="BEFORE">
+            select CMB_CHINA_CITYS_ID.NEXTVAL from dual
+        </selectKey>
+        insert into users (id,name,tel) values (#{id},#{name},#{tel})
+    </insert>
+
+    <!--删除用户-->
+    <delete id="deleteUser" parameterType="String">
+        delete from users t where t.id = #{1}
+    </delete>
+</mapper>
