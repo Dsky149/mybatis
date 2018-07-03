@@ -1,5 +1,3 @@
-package mybatis;
-
 import mybatis.dao.UserDaoImpl;
 import mybatis.mapper.UserMapper;
 import mybatis.po.User;
@@ -21,7 +19,7 @@ public class MappperMybatis {
 
             //添加用户
             User user = new User();
-            user.setName("bbbbddd");
+            user.setName("bbbbdasdasdddd");
             user.setTel("111111");
 
             //生成代理对象

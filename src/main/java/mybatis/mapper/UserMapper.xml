@@ -12,7 +12,7 @@
     Id：接收输入参数的类型，如果是简单类型，可以是value或者其他类型
     resultType:输出结果所映射成的java对象。
     -->
-    <select id="findUserById" parameterType="int" resultType="mybatis.po.User">
+    <select id="findUserById" parameterType="int" resultType="User">
         select * from users t where t.id = #{id}
     </select>
 
@@ -21,12 +21,12 @@
     ${}:不加任何修饰的拼接字符串，如果是简单类型只能输入value;
     有SLQ注入的风险
     -->
-    <select id="findUserByName" parameterType="String" resultType="mybatis.po.User">
+    <select id="findUserByName" parameterType="String" resultType="User">
         select * from users t where t.name like '%${value}%'
     </select>
 
     <!--添加用户-->
-    <insert id="insertUser" parameterType="mybatis.po.User">
+    <insert id="insertUser" parameterType="User">
         <!--丛数据库里取出数值放到一个地方-->
         <selectKey keyProperty="id"  resultType="java.lang.String" order="BEFORE">
             select CMB_CHINA_CITYS_ID.NEXTVAL from dual
