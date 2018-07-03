@@ -1,4 +1,3 @@
-package mybatis;
 import mybatis.dao.UserDaoImpl;
 import mybatis.po.User;
 import org.apache.ibatis.io.Resources;
