@@ -4,6 +4,30 @@
 <!--namespace 命名空间，作用是对SQL进行分类话管理，理解SQL隔离
 注意：使用mapper 代理开发，namespace 有特殊作用-->
 <mapper namespace="mybatis.mapper.UserMapper">
+
+    <!--添加Map-->
+    <resultMap id="resultMaop" type="User">
+        <id column="id_" property="id"></id>
+        <result column="name_" property="name"></result>
+    </resultMap>
+
+    <!--添加片段-->
+    <sql id="query_user">
+        <if test="userCustom !=null">
+            <if test="userCustom.id !=null and userCustom.id !='' ">
+                and  t.id = #{userCustom.id}
+            </if>
+
+            <if test="userCustom.name != null and userCustom.name != ''">
+                and t.name like '%${userCustom.name}%'
+            </if>
+            <if test="ids !=null ">
+                <foreach collection="ids" item="items" open="and   t.tel  in (" close=")" separator=",">
+                  #{items}
+                </foreach>
+            </if>
+        </if>
+    </sql>
     <!--
     通过ID查询用户表的ID
     statement ID 将SQL封装到mappeedStatement 对象中
@@ -12,7 +36,7 @@
     Id：接收输入参数的类型，如果是简单类型，可以是value或者其他类型
     resultType:输出结果所映射成的java对象。
     -->
-    <select id="findUserById" parameterType="int" resultType="User">
+    <select id="findUserById" parameterType="int" resultType="mybatis.po.UserCustom">
         select * from users t where t.id = #{id}
     </select>
 
@@ -38,4 +62,30 @@
     <delete id="deleteUser" parameterType="String">
         delete from users t where t.id = #{1}
     </delete>
+
+    <!---综合查询-->
+    <select id="queryUser" parameterType="mybatis.po.UserQueryVo" resultType="mybatis.po.UserCustom">
+        select * from users t where t.id = #{userCustom.id} and t.name like '%${userCustom.name}%'
+    </select>
+
+    <!---综合查询
+    使用resultMap
+    -->
+    <select id="queryUserByMap" parameterType="mybatis.po.UserQueryVo" resultMap="resultMaop">
+        select id id_, name name_,tel from users t
+
+        <where>
+           <include refid="query_user"></include>
+        </where>
+
+    </select>
+
+    <!--查询个数-->
+    <select id="queryUserCount" parameterType="mybatis.po.UserQueryVo" resultType="int">
+        select  count(*) from users t
+
+        <where>
+           <include refid="query_user"></include>
+        </where>
+    </select>
 </mapper>

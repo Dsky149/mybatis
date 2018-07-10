@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace 命名空间，作用是对SQL进行分类话管理，理解SQL隔离
+注意：使用mapper 代理开发，namespace 有特殊作用-->
+<mapper namespace="mybatis.mapper.OrdersMapper">
+
+    <!--定义ResultMap-->
+    <resultMap id="OrdersMap" type="mybatis.po.Orders">
+
+        <id column="id" property="id"></id>
+        <result column="user_id" property="user_id"></result>
+        <result column="cjsj" property="cjsj"></result>
+        <result column="status" property="status"></result>
+
+        <association property="user" javaType="mybatis.po.User">
+            <id column="id" property="id"></id>
+            <result column="name" property="name"></result>
+            <result column="tel" property="tel"></result>
+            <result column="address" property="address"></result>
+        </association>
+    </resultMap>
+
+    <!--一对多的ResultMap-->
+    <resultMap id="OnePointSome" type="mybatis.po.Orders" extends="OrdersMap">
+
+        <collection property="orderdetails" ofType="mybatis.po.Orderdetail">
+            <id column="order_id" property="order_id"></id>
+            <id column="item_id" property="item_id"></id>
+            <result column="sl" property="sl"></result>
+            <result column="jg" property="jg"></result>
+        </collection>
+    </resultMap>
+
+    <!--多对多的result Map实现-->
+    <resultMap id="SomePointSome" type="mybatis.po.User">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="tel" property="tel"></result>
+        <result column="address" property="address"></result>
+
+        <collection property="ordersList" ofType="mybatis.po.Orders">
+            <id column="id" property="id"></id>
+            <result column="user_id" property="user_id"></result>
+            <result column="cjsj" property="cjsj"></result>
+            <result column="status" property="status"></result>
+
+            <collection property="orderdetails" ofType="mybatis.po.Orderdetail">
+                <id column="order_id" property="order_id"></id>
+                <id column="item_id" property="item_id"></id>
+                <result column="sl" property="sl"></result>
+                <result column="jg" property="jg"></result>
+
+                <association property="item" javaType="mybatis.po.Item">
+                    <id column="id" property="id"></id>
+                    <result column="mc" property="mc"></result>
+                    <result column="js" property="js"></result>
+                </association>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <!--一对一resultType实现-->
+    <select id="selectThroughReslutType" resultType="mybatis.po.OrdersCustome">
+        select a.*,b.address,b.name from orders a, users b where a.user_id = b.id
+    </select>
+
+    <!--resultMap实现-->
+    <select id="selectThroughResultMap" resultMap="OrdersMap">
+        select a.*,b.address,b.name from orders a, users b where a.user_id = b.id
+    </select>
+
+    <!--一对多的实现-->
+    <select id="selectOnePointSomeThroughResultMap" resultMap="OnePointSome">
+        select a.*, b.address, b.name, c.order_id, c.item_id, c.sl
+         from orders a, users b, orderdetail c
+          where a.user_id = b.id
+          and a.id = c.order_id
+    </select>
+
+    <!--多对多的实现-->
+    <select id="selectSomePointSomeThroughResultMap" resultMap="SomePointSome">
+        select a.*, b.address, b.name, c.order_id, c.item_id, c.sl,d.mc
+       from orders a, users b, orderdetail c,item d
+        where a.user_id = b.id
+        and a.id = c.order_id
+          and c.item_id = d.id
+    </select>
+
+
+</mapper>
